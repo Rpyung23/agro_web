@@ -7,9 +7,17 @@
         <sidebar-item translate="no"  :link="{
           name: 'Dashboard',
           icon: 'ni ni-chart-bar-32',
-          path: './monitoreo',
+          path: './dashboard',
         }">
         </sidebar-item>
+
+        <sidebar-item translate="no"  :link="{
+          name: 'Sucursales / Ranchos',
+          icon: 'ni ni-box-2',
+          path: './sucursal',
+        }">
+        </sidebar-item>
+
 
         <sidebar-item translate="no"  :link="{
           name: 'Agenda',

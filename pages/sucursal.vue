@@ -19,7 +19,7 @@
               icon
               type="primary"
               size="sm"
-              @click="readProveedores()"
+              @click="readRancho()"
             >
               <span class="btn-inner--icon"
                 ><i class="el-icon-search"></i
@@ -49,132 +49,31 @@
           :data="tableDataProveedores"
           style="width: 100%"
         >
-          <el-table-column prop="CodigoProveedor" label="CODIGO" width="250">
+          <el-table-column prop="FK_Code_Sucursal" label="CODIGO" width="250">
           </el-table-column>
           <el-table-column
-            prop="NombresApellidosProveedor"
-            label="Nombres y Apellidos"
-            width="250"
+            prop="NombreSucursal"
+            label="NOMBRE DE LA SUCURSAL"
+            width="980"
           >
-          </el-table-column>
-
-          <el-table-column prop="AtienddeProveedor" label="ATIENDE" width="250">
-          </el-table-column>
-          <el-table-column label="Operaciones">
-            <template slot-scope="scope">
-              <el-button size="mini" @click="">Editar</el-button>
-              <el-button
-                size="mini"
-                type="danger"
-                v-if="scope.row.EstadoProveedor == 1"
-                @click=""
-                >Eliminar</el-button
-              >
-
-              <el-button
-                size="mini"
-                type="success"
-                v-if="scope.row.EstadoProveedor == 0"
-                @click=""
-                >Activar</el-button
-              >
-            </template>
           </el-table-column>
         </el-table>
       </card>
 
-      <modal :show.sync="isModalAddPersonal">
+      <modal :show.sync="isModalAddRancho">
         <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
           <form
             class="needs-validation"
             @submit.prevent="handleSubmit(firstFormSubmit)"
           >
             <div class="form-row">
-              <div class="col-md-6">
-                <base-input
-                  name="Nombre Empresa"
-                  placeholder="Nombre Empresa"
-                  prepend-icon="ni ni-circle-08"
-                  rules="required"
-                  v-model="NombreEmpresa"
-                >
-                </base-input>
-              </div>
-              <div class="col-md-6">
-                <base-input
-                  name="Nombre Atiende"
-                  placeholder="Nombre Atiende"
-                  prepend-icon="ni ni-circle-08"
-                  rules="required"
-                  v-model="NombreAtiende"
-                >
-                </base-input>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="col-md-6">
-                <base-input
-                  name="Telefono Empresa"
-                  placeholder="Telefono Empresa"
-                  prepend-icon="ni ni-circle-08"
-                  rules="required"
-                  v-model="TelefonoEmpresa"
-                >
-                </base-input>
-              </div>
-              <div class="col-md-6">
-                <base-input
-                  prepend-icon="ni ni-credit-card"
-                  name="Cuenta Bancaria"
-                  placeholder="Cuenta Bancaria"
-                  rules="required"
-                  v-model="CuentaBancaria"
-                >
-                </base-input>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="col-md-6">
-                <base-input
-                  name="Telefono"
-                  placeholder="Telefono"
-                  prepend-icon="ni ni-mobile-button"
-                  rules="required"
-                  v-model="Telefono"
-                >
-                </base-input>
-              </div>
-              <div class="col-md-6">
-                <base-input
-                  prepend-icon="ni ni-email-83"
-                  name="Email"
-                  placeholder="Email"
-                  rules="required"
-                  v-model="EmailProveedor"
-                >
-                </base-input>
-              </div>
-            </div>
-            <div class="form-row">
               <div class="col-md-12">
                 <base-input
-                  name="Dirección"
-                  placeholder="Dirección"
+                  name="Nombre del Rancho"
+                  placeholder="Nombre del Rancho"
                   prepend-icon="ni ni-world"
                   rules="required"
-                  v-model="Direccion"
-                >
-                </base-input>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="col-md-12">
-                <base-input
-                  name="Dirección Google Maps"
-                  placeholder="Dirección Google Maps"
-                  prepend-icon="ni ni-world"
-                  rules="required"
-                  v-model="DireccionGoogle"
+                  v-model="NameRancho"
                 >
                 </base-input>
               </div>
@@ -187,7 +86,7 @@
               >
               <base-button
                 type="primary"
-                @click="insertProveedor()"
+                @click="insertRancho()"
                 native-type="submit"
                 >GUARDAR</base-button
               >
@@ -201,7 +100,6 @@
   </div>
 </template>
 <script>
-import { throws } from "assert";
 import {
   Table,
   TableColumn,
@@ -245,26 +143,17 @@ export default {
       tableDataProveedores: [],
       mListSucursales: [],
       token: this.$cookies.get("token"),
-      isModalAddPersonal: false,
-      NombreEmpresa: "",
-      NombreAtiende: "",
-      TelefonoEmpresa: "",
-      Telefono: "",
-      EmailProveedor: "",
-      CuentaBancaria: "",
-      Direccion: "",
-      DireccionGoogle: "",
-      FotoProveedor:
-        "https://firebasestorage.googleapis.com/v0/b/carga-colombiana.appspot.com/o/user.png?alt=media",
+      isModalAddRancho: false,
+      NameRancho:null
     };
   },
   methods: {
     closeOpenModalAddPersonal(){
-      this.isModalAddPersonal = false
+      this.isModalAddRancho = false
     },
-    async readProveedores() {
+    async readRancho() {
       var datos = await this.$axios.post(
-        process.env.baseUrl + "/list_proveedor_empresa",
+        process.env.baseUrl + "/list_sucursal_usuario",
         {
           token: this.token,
         }
@@ -293,41 +182,25 @@ export default {
       // console.log(datos.data)
     },*/
     showOpenModalAddPersonal() {
-      this.isModalAddPersonal = true;
+      this.isModalAddRancho = true;
     },
-    async insertProveedor() {
+    async insertRancho() {
       if (
-        this.NombreEmpresa != "" &&
-        this.NombreAtiende != "" &&
-        this.TelefonoEmpresa != "" &&
-        this.Telefono != "" &&
-        this.EmailProveedor != "" &&
-        this.CuentaBancaria != "" &&
-        this.Direccion != "" &&
-        this.DireccionGoogle != ""
+        this.NameRancho != null
       ) {
         try {
           var datos = await this.$axios.post(
-            process.env.baseUrl + "/create_Proveedor",
+            process.env.baseUrl + "/create_sucursal",
             {
               token: this.token,
-              FotoProveedor: this.FotoProveedor,
-              sucursal: this.mSelectSucursalNewPersonal,
-              NombresApellidosProveedor: this.NombreEmpresa,
-              DirProveedor: this.Direccion,
-              TelefonoProveedor: this.Telefono,
-              EmailProveedor: this.EmailProveedor,
-              CuentaBancaria: this.CuentaBancaria,
-              AtienddeProveedor: this.NombreAtiende,
-              TelefonoEmpresa: this.TelefonoEmpresa,
-              DomicilioGoogle: this.DireccionGoogle,
+              name: this.NameRancho,
             }
           );
 
           if(datos.data.status_code == 200)
           {
             this.closeOpenModalAddPersonal()
-            this.readProveedores()
+            this.readRancho()
             this.clearModalAgenda()
           }
           console.log(datos.data);
@@ -337,19 +210,12 @@ export default {
       }
     },
     clearModalAgenda() {
-      this.NombreEmpresa = "";
-      this.NombreAtiende = "";
-      this.TelefonoEmpresa = "";
-      this.Telefono = "";
-      this.EmailProveedor = "";
-      this.CuentaBancaria = "";
-      this.Direccion = "";
-      this.DireccionGoogle = "";
+      this.NameRancho = null
     },
   },
   mounted() {
     /*this.readAllSucursalesUser();*/
-    this.readProveedores();
+    this.readRancho();
   },
 };
 </script>

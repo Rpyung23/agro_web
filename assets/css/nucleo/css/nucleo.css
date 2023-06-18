@@ -624,3 +624,12 @@ License - nucleoapp.com/license/
     display: none !important;
 }
 
+body {
+    overflow-y: scroll;
+    scrollbar-width: none; /* Para navegadores basados en WebKit (Chrome, Safari) */
+    -ms-overflow-style: none; /* Para Internet Explorer y Microsoft Edge */
+  }
+  
+  body::-webkit-scrollbar {
+    display: none; /* Para navegadores basados en WebKit (Chrome, Safari) */
+  }
