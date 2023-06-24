@@ -44,42 +44,41 @@
         footer-classes="pb-2"
       >
         <el-table
-          height="calc(100vh - 10rem)"
+          height="calc(100vh - 8.5rem)"
           ref="filterTable"
           :data="tableDataProveedores"
           style="width: 100%"
         >
-          <el-table-column prop="CodigoProveedor" label="CODIGO" width="250">
+        <el-table-column label="" width="110">
+            <template slot-scope="scope">
+              <base-button
+                size="sm"
+                title="EDITAR"
+                @click="showAddEditPersonal(scope.row)"
+                type="default"
+                ><i class="ni ni-settings"></i
+              ></base-button>
+            </template>
+          </el-table-column>
+
+          <el-table-column prop="CodigoProveedor" label="CODIGO" width="150">
           </el-table-column>
           <el-table-column
             prop="NombresApellidosProveedor"
             label="Nombres y Apellidos"
-            width="250"
+            width="350"
           >
           </el-table-column>
 
           <el-table-column prop="AtienddeProveedor" label="ATIENDE" width="250">
           </el-table-column>
-          <el-table-column label="Operaciones">
-            <template slot-scope="scope">
-              <el-button size="mini" @click="">Editar</el-button>
-              <el-button
-                size="mini"
-                type="danger"
-                v-if="scope.row.EstadoProveedor == 1"
-                @click=""
-                >Eliminar</el-button
-              >
 
-              <el-button
-                size="mini"
-                type="success"
-                v-if="scope.row.EstadoProveedor == 0"
-                @click=""
-                >Activar</el-button
-              >
-            </template>
+          <el-table-column prop="EmailProveedor" label="EMAIL" width="250">
           </el-table-column>
+
+          <el-table-column prop="DomicilioGoogle" label="DOMICIO GOOGLE" width="250">
+          </el-table-column>
+
         </el-table>
       </card>
 
@@ -196,6 +195,119 @@
         </validation-observer>
       </modal>
 
+      <modal :show.sync="isModalEditPersonal">
+        <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
+          <form
+            class="needs-validation"
+            @submit.prevent="handleSubmit(firstFormSubmit)"
+          >
+            <div class="form-row">
+              <div class="col-md-6">
+                <base-input
+                  name="Nombre Empresa"
+                  placeholder="Nombre Empresa"
+                  prepend-icon="ni ni-circle-08"
+                  rules="required"
+                  v-model="NombreEmpresa"
+                >
+                </base-input>
+              </div>
+              <div class="col-md-6">
+                <base-input
+                  name="Nombre Atiende"
+                  placeholder="Nombre Atiende"
+                  prepend-icon="ni ni-circle-08"
+                  rules="required"
+                  v-model="NombreAtiende"
+                >
+                </base-input>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col-md-6">
+                <base-input
+                  name="Telefono Empresa"
+                  placeholder="Telefono Empresa"
+                  prepend-icon="ni ni-circle-08"
+                  rules="required"
+                  v-model="TelefonoEmpresa"
+                >
+                </base-input>
+              </div>
+              <div class="col-md-6">
+                <base-input
+                  prepend-icon="ni ni-credit-card"
+                  name="Cuenta Bancaria"
+                  placeholder="Cuenta Bancaria"
+                  rules="required"
+                  v-model="CuentaBancaria"
+                >
+                </base-input>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col-md-6">
+                <base-input
+                  name="Telefono"
+                  placeholder="Telefono"
+                  prepend-icon="ni ni-mobile-button"
+                  rules="required"
+                  v-model="Telefono"
+                >
+                </base-input>
+              </div>
+              <div class="col-md-6">
+                <base-input
+                  prepend-icon="ni ni-email-83"
+                  name="Email"
+                  placeholder="Email"
+                  rules="required"
+                  v-model="EmailProveedor"
+                >
+                </base-input>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col-md-12">
+                <base-input
+                  name="Dirección"
+                  placeholder="Dirección"
+                  prepend-icon="ni ni-world"
+                  rules="required"
+                  v-model="Direccion"
+                >
+                </base-input>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col-md-12">
+                <base-input
+                  name="Dirección Google Maps"
+                  placeholder="Dirección Google Maps"
+                  prepend-icon="ni ni-world"
+                  rules="required"
+                  v-model="DireccionGoogle"
+                >
+                </base-input>
+              </div>
+            </div>
+            <div class="text-right">
+              <base-button
+                type="danger"
+                @click="closeOpenModalEditPersonal()"
+                >CANCELAR</base-button
+              >
+              <base-button
+                type="primary"
+                @click="updateProveedor()"
+                native-type="submit"
+                >ACTUALIZAR</base-button
+              >
+            </div>
+          </form>
+        </validation-observer>
+      </modal>
+
       .
     </base-header>
   </div>
@@ -246,24 +358,103 @@ export default {
       mListSucursales: [],
       token: this.$cookies.get("token"),
       isModalAddPersonal: false,
-      NombreEmpresa: "",
-      NombreAtiende: "",
-      TelefonoEmpresa: "",
-      Telefono: "",
-      EmailProveedor: "",
-      CuentaBancaria: "",
-      Direccion: "",
-      DireccionGoogle: "",
+      isModalEditPersonal:false,
+      CodeProveedor:null,
+      NombreEmpresa: null,
+      NombreAtiende: null,
+      TelefonoEmpresa: null,
+      Telefono: null,
+      EmailProveedor: null,
+      CuentaBancaria: null,
+      Direccion: null,
+      DireccionGoogle: null,
       FotoProveedor:
         "https://firebasestorage.googleapis.com/v0/b/carga-colombiana.appspot.com/o/user.png?alt=media",
     };
   },
   methods: {
+    showAddEditPersonal(item){
+      this.isModalEditPersonal = true
+      this.CodeProveedor = item.CodigoProveedor
+      this.NombreEmpresa = item.NombresApellidosProveedor
+      this.NombreAtiende = item.AtienddeProveedor
+      this.TelefonoEmpresa = item.TelefonoEmpresa
+      this.Telefono = item.TelefonoProveedor
+      this.EmailProveedor = item.EmailProveedor
+      this.CuentaBancaria = item.CuentaBancaria
+      this.Direccion = item.DirProveedor
+      this.DireccionGoogle = item.DomicilioGoogle
+    },
+    closeOpenModalEditPersonal(){
+      this.isModalEditPersonal = false
+      this.NombreEmpresa = null
+      this.NombreAtiende = null
+      this.TelefonoEmpresa = null
+      this.Telefono = null
+      this.EmailProveedor = null
+      this.CuentaBancaria = null
+      this.Direccion = null
+      this.DireccionGoogle = null
+    },
+    async updateProveedor() {
+      if (
+        this.NombreEmpresa != null &&
+        this.NombreAtiende != null &&
+        this.TelefonoEmpresa != null &&
+        this.Telefono != null &&
+        this.EmailProveedor != null &&
+        this.CuentaBancaria != null &&
+        this.Direccion != null &&
+        this.DireccionGoogle != null
+      ) {
+        try {
+          var datos = await this.$axios.put(
+            process.env.baseUrl + "/update_detalle_proveedor",
+            {
+              token: this.token,
+              CodigoProveedor: this.CodeProveedor,
+              FotoProveedor: this.FotoProveedor,
+              NombresApellidosProveedor: this.NombreEmpresa,
+              DirProveedor: this.Direccion,
+              TelefonoProveedor: this.Telefono,
+              EmailProveedor: this.EmailProveedor,
+              CuentaBancaria: this.CuentaBancaria,
+              AtienddeProveedor: this.NombreAtiende,
+              TelefonoEmpresa: this.TelefonoEmpresa,
+              DomicilioGoogle: this.DireccionGoogle,
+            }
+          );
+
+          if(datos.data.status_code == 200)
+          {
+            this.closeOpenModalEditPersonal()
+            this.readProveedores()
+            this.clearModalAgenda()
+          }else{
+            alert(datos.data.msm)
+          }
+          console.log(datos.data);
+        } catch (error) {
+          alert(error.toString())
+          console.log(error);
+        }
+      }
+    },
     closeOpenModalAddPersonal(){
       this.isModalAddPersonal = false
+      this.NombreEmpresa = null
+      this.NombreAtiende = null
+      this.TelefonoEmpresa = null
+      this.Telefono = null
+      this.EmailProveedor = null
+      this.CuentaBancaria = null
+      this.Direccion = null
+      this.DireccionGoogle = null
     },
     async readProveedores() {
-      var datos = await this.$axios.post(
+      this.tableDataProveedores = []
+      try {
+        var datos = await this.$axios.post(
         process.env.baseUrl + "/list_proveedor_empresa",
         {
           token: this.token,
@@ -271,6 +462,9 @@ export default {
       );
 
       this.tableDataProveedores.push(...datos.data.data);
+      } catch (error) {
+         console.log(error)
+      }
 
       // console.log(datos.data)
     },
@@ -294,17 +488,25 @@ export default {
     },*/
     showOpenModalAddPersonal() {
       this.isModalAddPersonal = true;
+      this.NombreEmpresa = null
+      this.NombreAtiende = null
+      this.TelefonoEmpresa = null
+      this.Telefono = null
+      this.EmailProveedor = null
+      this.CuentaBancaria = null
+      this.Direccion = null
+      this.DireccionGoogle = null
     },
     async insertProveedor() {
       if (
-        this.NombreEmpresa != "" &&
-        this.NombreAtiende != "" &&
-        this.TelefonoEmpresa != "" &&
-        this.Telefono != "" &&
-        this.EmailProveedor != "" &&
-        this.CuentaBancaria != "" &&
-        this.Direccion != "" &&
-        this.DireccionGoogle != ""
+        this.NombreEmpresa != null &&
+        this.NombreAtiende != null &&
+        this.TelefonoEmpresa != null &&
+        this.Telefono != null &&
+        this.EmailProveedor != null &&
+        this.CuentaBancaria != null &&
+        this.Direccion != null &&
+        this.DireccionGoogle != null
       ) {
         try {
           var datos = await this.$axios.post(

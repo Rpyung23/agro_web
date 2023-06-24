@@ -633,3 +633,7 @@ body {
   body::-webkit-scrollbar {
     display: none; /* Para navegadores basados en WebKit (Chrome, Safari) */
   }
+
+  .avatar{
+    background-color: white !important;
+  }

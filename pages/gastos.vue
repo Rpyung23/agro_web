@@ -7,20 +7,45 @@
         body-classes="px-0 pb-1 card-bodyTopOpcionesRPagosVehiculoPRoduccionPanelDespachoBusqueda cardSelectRubrosEstadosPagosVehiculoProduccionContainerPanelDespachoBusqueda"
         footer-classes="pb-2"
       >
-        <div
-          class="cardTextoRPagosVehiculoProduccionPanelDespachoBusqueda"
-        ></div>
+        <div class="cardTextoRPagosVehiculoProduccionPanelDespachoBusqueda">
+          <el-select
+            v-model="mSelectSucursal"
+            style="margin-right: 0.5rem"
+            placeholder="SUCURSAL"
+            multiple
+            collapse-tags
+          >
+            <el-option
+              v-for="item in mListSucursales"
+              :key="item.FK_Code_Sucursal"
+              :label="item.NombreSucursal"
+              :value="item.FK_Code_Sucursal"
+            >
+            </el-option>
+          </el-select>
+
+          <el-date-picker
+            type="date"
+            placeholder="Select date and time"
+            style="margin-right: 0.5rem"
+            v-model="fechaInicioIngreso"
+          >
+          </el-date-picker>
+
+          <el-date-picker
+            type="date"
+            placeholder="Select date and time"
+            v-model="fechaFinalIngreso"
+          >
+          </el-date-picker>
+        </div>
 
         <div
           class="cardSelectRubrosEstadosPagosVehiculoProduccionContainerPanelDespachoBusqueda"
         >
           <div class="buttonCenterEndDerecha">
-            <base-button
-              icon
-              type="primary"
-              size="sm"
-              @click="readPersonal()"
-            >
+            <strong style="margin-right: 0.5rem">{{ totaGasto }} $</strong>
+            <base-button icon type="primary" size="sm" @click="readGastoAll()">
               <span class="btn-inner--icon"
                 ><i class="el-icon-search"></i
               ></span>
@@ -28,8 +53,8 @@
             <base-button
               type="default"
               size="sm"
-              @click="showOpenModalAddPersonal()"
-              title="ADD Proveedor"
+              @click="showModalAddGasto()"
+              title="REGISTRAR INGRESO"
             >
               <span class="btn-inner--icon"><i class="ni ni-fat-add"></i></span>
             </base-button>
@@ -44,17 +69,16 @@
         footer-classes="pb-2"
       >
         <el-table
-          height="calc(100vh - 8.3rem)"
+          height="calc(100vh - 8.5rem)"
           ref="filterTable"
-          :data="tableDataProveedores"
+          :data="tableDataVehiculos"
           style="width: 100%"
         >
-
-        <!--<el-table-column label="" width="110">
+          <!--<el-table-column label="" width="90">
             <template slot-scope="scope">
               <base-button
                 size="sm"
-                title="EDITAR"
+                title="CONTROL VEHICULAR"
                 @click="showModalControlVehicular(scope.row)"
                 type="default"
                 ><i class="ni ni-settings"></i
@@ -62,36 +86,52 @@
             </template>
           </el-table-column>-->
 
-
-          <el-table-column prop="CodigoEmpleado" label="CODIGO" width="250">
+          <el-table-column prop="CodeGasto" label="CODIGO" width="130">
           </el-table-column>
           <el-table-column
-            prop="NombresApellidosEmpleado"
-            label="Nombres y Apellidos"
-            width="250"
+            prop="DateTimeRegistroGasto"
+            label="FECHA"
+            width="150"
           >
           </el-table-column>
 
-          <el-table-column prop="EmailEmpleado" label="EMAIL" width="250">
+          <el-table-column prop="NombreGasto" label="GASTO" width="180">
           </el-table-column>
-          <el-table-column prop="TelefonoEmpleado" label="TELEFONO" width="250">
+          <el-table-column prop="CodigoFactura" label="FACTURA" width="180">
           </el-table-column>
-          <el-table-column prop="NombreSucursal" label="SUCURSAL" width="250">
+          <el-table-column prop="QRealizo" label="QUIEN REALIZO" width="250">
           </el-table-column>
 
+          <el-table-column prop="cantidad" label="CANTIDAD $" width="200">
+          </el-table-column>
+          <el-table-column prop="NombreSucursal" label="SUCURSAL" width="280">
+          </el-table-column>
         </el-table>
       </card>
 
-      <modal :show.sync="modalAddPersonal">
+      <modal :show.sync="modalAddGasto">
+        <h5 slot="header" class="modal-title" id="modal-title-default">
+          REGISTRAR NUEVO GASTO
+        </h5>
         <validation-observer v-slot="{ handleSubmit }" ref="formValidator">
           <form
             class="needs-validation"
             @submit.prevent="handleSubmit(firstFormSubmit)"
           >
             <div class="form-row">
-              <div class="col-md-12">
+              <div class="col-md-6">
+                <base-input
+                  name="Nombre Gasto"
+                  placeholder="Nombre Gasto"
+                  prepend-icon="ni ni-circle-08"
+                  rules="required"
+                  v-model="NombreGasto"
+                >
+                </base-input>
+              </div>
+              <div class="col-md-6">
                 <el-select
-                  v-model="mSelectSucursal"
+                  v-model="mSelectSucursalGastoModal"
                   style="margin-bottom: 1rem; width: 100%"
                   placeholder="SUCURSAL"
                 >
@@ -108,22 +148,28 @@
 
             <div class="form-row">
               <div class="col-md-6">
-                <base-input
-                  name="DNI EMPLEADO"
-                  placeholder="DNI EMPLEADO"
-                  prepend-icon="ni ni-circle-08"
-                  rules="required"
-                  v-model="CodigoEmpleado"
+                <el-select
+                  v-model="mSelectProveedor"
+                  style="margin-bottom: 1rem; width: 100%"
+                  placeholder="PROVEEDOR"
                 >
-                </base-input>
+                  <el-option
+                    v-for="item in mListProveedor"
+                    :key="item.CodigoProveedor"
+                    :label="item.NombresApellidosProveedor"
+                    :value="item.CodigoProveedor"
+                  >
+                  </el-option>
+                </el-select>
               </div>
               <div class="col-md-6">
                 <base-input
-                  name="Nombre Empleado"
-                  placeholder="Nombre Empleado"
-                  prepend-icon="ni ni-circle-08"
+                  prepend-icon="ni ni-money-coins"
+                  name="Cantidad"
+                  placeholder="Cantidad"
                   rules="required"
-                  v-model="NombresApellidosEmpleado"
+                  type="Number"
+                  v-model="CantidadGasto"
                 >
                 </base-input>
               </div>
@@ -131,46 +177,41 @@
             <div class="form-row">
               <div class="col-md-6">
                 <base-input
-                  name="Telefono"
-                  placeholder="Telefono"
-                  prepend-icon="ni ni-mobile-button"
+                  name="N° Factura"
+                  placeholder="N° Factura"
+                  prepend-icon="ni ni-single-copy-04"
                   rules="required"
-                  v-model="TelefonoEmpleado"
+                  v-model="NumFacturaGasto"
                 >
                 </base-input>
               </div>
               <div class="col-md-6">
                 <base-input
-                  prepend-icon="ni ni-email-83"
-                  name="Email"
-                  placeholder="Email"
+                  prepend-icon="ni ni-single-02"
+                  name="Quien lo realizo"
+                  placeholder="Quien lo realizo"
                   rules="required"
-                  v-model="EmailEmpleado"
+                  v-model="QRealizoGasto"
                 >
                 </base-input>
               </div>
             </div>
 
-            <div class="form-row">
-              <div class="col-md-12">
-                <base-input
-                  name="Dirección Google Maps"
-                  placeholder="Dirección Google Maps"
-                  prepend-icon="ni ni-world"
-                  rules="required"
-                  v-model="DirEmpleado"
-                >
-                </base-input>
-              </div>
+            <div class="form-group">
+              <label for="exampleFormControlTextarea1">ANOTACIONES</label>
+              <textarea
+                class="form-control"
+                id="exampleFormControlTextarea1"
+                rows="3"
+                v-model="NotasGasto"
+              ></textarea>
             </div>
+
             <div class="text-right">
-              <base-button type="danger" @click="closeModalAddPersonal()"
+              <base-button type="danger" @click="closeModalAddGasto()"
                 >CANCELAR</base-button
               >
-              <base-button
-                type="primary"
-                @click="insertEmpleado()"
-                native-type="submit"
+              <base-button type="primary" @click="inserNewGasto()" native-type="submit"
                 >GUARDAR</base-button
               >
             </div>
@@ -200,7 +241,9 @@ import {
   Button,
   Loading,
   Switch,
+  Badge,
 } from "element-ui";
+import { getFecha_dd_mm_yyyy } from "../util/fechas";
 
 export default {
   layout: "DashboardLayout",
@@ -220,84 +263,68 @@ export default {
     [CheckboxGroup.name]: CheckboxGroup,
     [Popover.name]: Popover,
     [Button.name]: Button,
+    [Badge.name]: Badge,
   },
   data() {
     return {
-      modalAddPersonal: false,
-      tableDataProveedores: [],
+      tableDataVehiculos: [],
+      fechaInicioIngreso: null,
+      fechaFinalIngreso: null,
       token: this.$cookies.get("token"),
       mListSucursales: [],
+      mListProveedor: [],
       mSelectSucursal: null,
-      CodigoEmpleado: "",
-      NombresApellidosEmpleado: "",
-      DirEmpleado: "",
-      TelefonoEmpleado: "",
-      EmailEmpleado: "",
-      FotoEmpleado:
-        "https://firebasestorage.googleapis.com/v0/b/carga-colombiana.appspot.com/o/user.png?alt=media",
+      mSelectProveedor: null,
+      mSelectSucursalGastoModal:null,
+      totaGasto: "0.00",
+      modalAddGasto: false,
+      NombreGasto: null,
+      CantidadGasto: null,
+      NumFacturaGasto: null,
+      QRealizoGasto: null,
+      NotasGasto: null,
     };
   },
   methods: {
-    showOpenModalAddPersonal() {
-      this.modalAddPersonal = true;
+    showModalAddGasto() {
+      this.modalAddGasto = true;
     },
-    closeModalAddPersonal() {
-      this.modalAddPersonal = false;
+    closeModalAddGasto() {
+      this.modalAddGasto = false
+      this.mSelectSucursalGastoModal = null
+      this.mSelectProveedor = null
+      this.NombreGasto = null
+      this.CantidadGasto = null
+      this.NumFacturaGasto = null
+      this.QRealizoGasto = null
+      this.NotasGasto = null
     },
-    async readPersonal() {
-      this.tableDataProveedores  = []
-      try {
-        var datos = await this.$axios.post(
-        process.env.baseUrl + "/read_empleado_all_usuario_admin",
-        {
-          token: this.token,
-        }
-      );
-
-      this.tableDataProveedores.push(...datos.data.datos);
-      } catch (error) {
-        console.log(error)
-      }
-
-      // console.log(datos.data)
-    },
-    clearModalAddPersonal() {
-      this.mSelectSucursal = null;
-      this.CodigoEmpleado = "";
-      this.NombresApellidosEmpleado = "";
-      this.DirEmpleado = "";
-      this.TelefonoEmpleado = "";
-      this.EmailEmpleado = "";
-    },
-    async insertEmpleado() {
-      if (
-        this.mSelectSucursal != null &&
-        this.CodigoEmpleado != "" &&
-        this.NombresApellidosEmpleado != "" &&
-        this.DirEmpleado != "" &&
-        this.TelefonoEmpleado != "" &&
-        this.EmailEmpleado != ""
-      ) {
+    async readGastoAll() {
+      this.totaGasto = "0.00";
+      this.tableDataVehiculos = [];
+      if (this.fechaFinalIngreso != null && this.fechaInicioIngreso != null) {
         try {
           var datos = await this.$axios.post(
-            process.env.baseUrl + "/create_empleado",
+            process.env.baseUrl + "/gasto_fecha_sucursal",
             {
               token: this.token,
-              CodigoEmpleado: this.CodigoEmpleado,
-              NombresApellidosEmpleado: this.NombresApellidosEmpleado,
-              DirEmpleado: this.DirEmpleado,
-              TelefonoEmpleado: this.TelefonoEmpleado,
-              EmailEmpleado: this.EmailEmpleado,
-              FotoEmpleado: this.FotoEmpleado,
-              sucursal: this.mSelectSucursal,
+              sucursal:
+                this.mSelectSucursal.length > 0 ? this.mSelectSucursal : "*",
+              fechaI: getFecha_dd_mm_yyyy(this.fechaInicioIngreso),
+              fechaF: getFecha_dd_mm_yyyy(this.fechaFinalIngreso),
             }
           );
 
-          console.log(datos.data)
-          if (datos.data.status_code == 200) {
-            this.closeModalAddPersonal();
-            this.readPersonal();
+          for (var i = 0; i < datos.data.datos.length; i++) {
+            console.log(datos.data.datos[i].CantidadIngreso);
+            this.totaGasto = Number(
+              parseFloat(this.totaGasto) +
+                parseFloat(datos.data.datos[i].cantidad)
+            ).toFixed(2);
+            console.log(this.totaGasto);
           }
+
+          this.tableDataVehiculos.push(...datos.data.datos);
         } catch (error) {
           console.log(error);
         }
@@ -320,10 +347,56 @@ export default {
 
       // console.log(datos.data)
     },
+    async readProveeddor() {
+      try {
+        this.mListProveedor = [];
+        var datos = await this.$axios.post(
+          process.env.baseUrl + "/list_proveedor_empresa",
+          {
+            token: this.token,
+          }
+        );
+
+        this.mListProveedor.push(...datos.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+
+      // console.log(datos.data)
+    },
+    async inserNewGasto() {
+      try {
+        var datos = await this.$axios.post(
+          process.env.baseUrl + "/create_gasto",
+          {
+            token: this.token,
+            NombreGasto: this.NombreGasto,
+            FK_CodigoProveedor: this.mSelectProveedor,
+            cantidad: this.CantidadGasto,
+            CodigoFactura: this.NumFacturaGasto,
+            NotaFactura: this.NotasGasto,
+            QRealizo: this.QRealizoGasto,
+            FotoFactura:
+              "https://www.ceupe.com/images/easyblog_articles/3967/ejemplo-factura.jpg",
+            sucursal: this.mSelectSucursalGastoModal,
+          }
+        );
+        console.log(datos.data)
+        if (datos.data.status_code != 200) {
+          alert(datos.data.msm);
+        } else {
+          this.closeModalAddGasto()
+          this.readGastoAll()
+        }
+      } catch (error) {
+        alert(error.toString());
+      }
+    },
   },
   mounted() {
-    this.readPersonal();
+    this.readProveeddor();
     this.readSucursales();
+    this.readGastoAll();
   },
 };
 </script>

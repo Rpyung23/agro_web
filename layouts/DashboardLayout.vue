@@ -38,7 +38,7 @@
         <sidebar-item translate="no"  :link="{
           name: 'Asistencia',
           icon: 'ni ni-collection',
-          path: './monitoreo',
+          path: './dashboard',
         }">
         </sidebar-item>
 
@@ -53,8 +53,8 @@
           name: 'Contabilidad',
           icon: 'ni ni-money-coins',
         }">
-        <sidebar-item :link="{ name: 'INGRESOS', path: './rdistancia' }" translate="no"/>
-          <sidebar-item :link="{ name: 'GASTOS', path: './rvelocidades' }" translate="no"/>
+        <sidebar-item :link="{ name: 'INGRESOS', path: './ingresos' }" translate="no"/>
+          <sidebar-item :link="{ name: 'GASTOS', path: './gastos' }" translate="no"/>
 
         </sidebar-item>
 
