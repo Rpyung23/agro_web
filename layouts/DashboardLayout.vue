@@ -14,7 +14,7 @@
         <sidebar-item translate="no"  :link="{
           name: 'Sucursales / Ranchos',
           icon: 'ni ni-box-2',
-          path: './sucursal',
+          path: '/sucursal',
         }">
         </sidebar-item>
 
@@ -22,7 +22,7 @@
         <sidebar-item translate="no"  :link="{
           name: 'Agenda',
           icon: 'ni ni-badge',
-          path: './agenda',
+          path: '/agenda',
         }">
         </sidebar-item>
 
@@ -30,7 +30,7 @@
         <sidebar-item translate="no"  :link="{
           name: 'Personal',
           icon: 'ni ni-single-02',
-          path: './personal',
+          path: '/personal',
         }">
         </sidebar-item>
 
@@ -38,14 +38,14 @@
         <sidebar-item translate="no"  :link="{
           name: 'Asistencia',
           icon: 'ni ni-collection',
-          path: './dashboard',
+          path: '/asistencia',
         }">
         </sidebar-item>
 
         <sidebar-item translate="no"  :link="{
           name: 'Control Vehicular',
           icon: 'ni ni-delivery-fast',
-          path: './control_vehicular',
+          path: '/control_vehicular',
         }">
         </sidebar-item>
 
@@ -61,7 +61,7 @@
         <sidebar-item translate="no"  :link="{
           name: 'Trabajos Pendientes',
           icon: 'ni ni-ruler-pencil',
-          path: './trabajos',
+          path: '/trabajos',
         }">
         </sidebar-item>
 

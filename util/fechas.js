@@ -175,3 +175,18 @@ export function convertSecondtoTimeString(seconds) {
 }
 
 
+export function convertDateTime(fechaActual) 
+{
+    var year = fechaActual.getFullYear();
+var month = ('0' + (fechaActual.getMonth() + 1)).slice(-2);
+var day = ('0' + fechaActual.getDate()).slice(-2);
+var hours = ('0' + fechaActual.getHours()).slice(-2);
+var minutes = ('0' + fechaActual.getMinutes()).slice(-2);
+var seconds = ('0' + fechaActual.getSeconds()).slice(-2);
+
+var formatoDeseado = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+
+return formatoDeseado
+}
+
+
