@@ -43,6 +43,13 @@
         </sidebar-item>
 
         <sidebar-item translate="no"  :link="{
+          name: 'Sueldos',
+          icon: 'ni ni-money-coins',
+          path: '/sueldo',
+        }">
+        </sidebar-item>
+
+        <sidebar-item translate="no"  :link="{
           name: 'Control Vehicular',
           icon: 'ni ni-delivery-fast',
           path: '/control_vehicular',

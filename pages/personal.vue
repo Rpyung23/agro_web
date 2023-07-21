@@ -15,12 +15,7 @@
           class="cardSelectRubrosEstadosPagosVehiculoProduccionContainerPanelDespachoBusqueda"
         >
           <div class="buttonCenterEndDerecha">
-            <base-button
-              icon
-              type="primary"
-              size="sm"
-              @click="readPersonal()"
-            >
+            <base-button icon type="primary" size="sm" @click="readPersonal()">
               <span class="btn-inner--icon"
                 ><i class="el-icon-search"></i
               ></span>
@@ -49,8 +44,7 @@
           :data="tableDataProveedores"
           style="width: 100%"
         >
-
-        <!--<el-table-column label="" width="110">
+          <!--<el-table-column label="" width="110">
             <template slot-scope="scope">
               <base-button
                 size="sm"
@@ -62,7 +56,6 @@
             </template>
           </el-table-column>-->
 
-
           <el-table-column prop="CodigoEmpleado" label="CODIGO" width="250">
           </el-table-column>
           <el-table-column
@@ -72,13 +65,18 @@
           >
           </el-table-column>
 
+          <el-table-column prop="salario_semanal" label="SALARIO S." width="150">
+          </el-table-column>
+
+          <el-table-column prop="salario_diario" label="SALARIO D." width="150">
+          </el-table-column>
+
           <el-table-column prop="EmailEmpleado" label="EMAIL" width="250">
           </el-table-column>
           <el-table-column prop="TelefonoEmpleado" label="TELEFONO" width="250">
           </el-table-column>
           <el-table-column prop="NombreSucursal" label="SUCURSAL" width="250">
           </el-table-column>
-
         </el-table>
       </card>
 
@@ -89,7 +87,7 @@
             @submit.prevent="handleSubmit(firstFormSubmit)"
           >
             <div class="form-row">
-              <div class="col-md-12">
+              <div class="col-md-6">
                 <el-select
                   v-model="mSelectSucursal"
                   style="margin-bottom: 1rem; width: 100%"
@@ -103,6 +101,18 @@
                   >
                   </el-option>
                 </el-select>
+              </div>
+
+              <div class="col-md-6">
+                <base-input
+                  name="SALARIO SEMANAL"
+                  placeholder="SALARIO SEMANAL"
+                  prepend-icon="ni ni-money-coins"
+                  rules="required"
+                  type="number"
+                  v-model="SalarioEmpleado"
+                >
+                </base-input>
               </div>
             </div>
 
@@ -235,6 +245,7 @@ export default {
       EmailEmpleado: "",
       FotoEmpleado:
         "https://firebasestorage.googleapis.com/v0/b/carga-colombiana.appspot.com/o/user.png?alt=media",
+      SalarioEmpleado: null,
     };
   },
   methods: {
@@ -245,18 +256,18 @@ export default {
       this.modalAddPersonal = false;
     },
     async readPersonal() {
-      this.tableDataProveedores  = []
+      this.tableDataProveedores = [];
       try {
         var datos = await this.$axios.post(
-        process.env.baseUrl + "/read_empleado_all_usuario_admin",
-        {
-          token: this.token,
-        }
-      );
+          process.env.baseUrl + "/read_empleado_all_usuario_admin",
+          {
+            token: this.token,
+          }
+        );
 
-      this.tableDataProveedores.push(...datos.data.datos);
+        this.tableDataProveedores.push(...datos.data.datos);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
 
       // console.log(datos.data)
@@ -268,6 +279,7 @@ export default {
       this.DirEmpleado = "";
       this.TelefonoEmpleado = "";
       this.EmailEmpleado = "";
+      this.SalarioEmpleado = null
     },
     async insertEmpleado() {
       if (
@@ -276,7 +288,7 @@ export default {
         this.NombresApellidosEmpleado != "" &&
         this.DirEmpleado != "" &&
         this.TelefonoEmpleado != "" &&
-        this.EmailEmpleado != ""
+        this.EmailEmpleado != "" && this.SalarioEmpleado != null
       ) {
         try {
           var datos = await this.$axios.post(
@@ -290,10 +302,11 @@ export default {
               EmailEmpleado: this.EmailEmpleado,
               FotoEmpleado: this.FotoEmpleado,
               sucursal: this.mSelectSucursal,
+              salario_semanal: this.SalarioEmpleado
             }
           );
 
-          console.log(datos.data)
+          console.log(datos.data);
           if (datos.data.status_code == 200) {
             this.closeModalAddPersonal();
             this.readPersonal();
